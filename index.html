@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    </head>
+    <body>
+        <script type="text/javascript">//<![CDATA[
+            (function() {
+                // Player Manager
+                //------------------------------------
+                function PlayerManager(adapter) {
+                    this.adapter = adapter;
+                }
+                PlayerManager.prototype.getAdapter = function() {
+                    return this.adapter;
+                };
+                // Adapters
+                function PlayerAdapter(config) {
+                    this.config = config;
+                }
+                function HTML5Adapter(config) {
+                    PlayerAdapter.call(this, config);
+                }
+                function FlashAdapter(config) {
+                    PlayerAdapter.call(this, config);
+                }
+                function AdapterFactory() {}
+                AdapterFactory.prototype.manufacture = function() {
+                    // some logic to decide between HTML5Adapter or FlashAdapter
+                    return new FlashAdapter({"foo": "bar"});
+                }
+                //------------------------------------
+                
+                // Let's go!
+                var adapterFactory = new AdapterFactory();
+                var adapter = adapterFactory.manufacture();
+                var playerManager = new PlayerManager(adapter);
+                console.log(playerManager.getAdapter());
+            })();
+            //]]></script>
+    </body>
+</html>
