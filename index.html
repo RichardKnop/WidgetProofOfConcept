@@ -74,11 +74,10 @@
             })(window);
 
             // Let's go!
-            var placementId = "hello";
-            var widgetManager = new WidgetManager(placementId);
+            var widgetManager = new WidgetManager("somePlacementId");
             widgetManager.loadConfig();
             widgetManager.loadModules(["module1", "module2", "module3"]);
-            widgetManager.loadVideo("foo");
+            widgetManager.loadVideo("someVideoId");
             //]]></script>
     </body>
 </html>
