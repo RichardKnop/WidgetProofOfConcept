@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Widget Proof Of Concept Test</title>
+        <link rel="stylesheet" href="/qunit.css">
+        <script src="/qunit.js"></script>
+    </head>
+    <body>
+        <div id="qunit"></div>
+        <div id="qunit-fixture"></div>
+        <script src="/widget.js"></script>
+        <script type="text/javascript">//<![CDATA[
+            // Functions
+            runTests();
+            function runTests() {
+                test("Test WidgetManager constructor", function() {
+                    var widgetManager = new WidgetManager("somePlacementId");
+                    strictEqual(widgetManager.placementId, "somePlacementId");
+                });
+                test("Test WidgetManager::loadModules", function() {
+                    var widgetManager = new WidgetManager("somePlacementId");
+                    widgetManager.loadModules(["a", "b", "c"]);
+                    equal(widgetManager.modules.length, 3);
+                    deepEqual(widgetManager.modules, ["a", "b", "c"]);
+                });
+                test("Test WidgetManager method chaining", function() {
+                    var widgetManager = new WidgetManager("somePlacementId");
+                    ok(widgetManager.loadConfig().loadModules(["a", "b", "c"]).loadVideo("foo") instanceof WidgetManager);
+                });
+            }
+            //]]></script>
+    </body>
+</html>
