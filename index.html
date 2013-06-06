@@ -1,10 +1,14 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title></title>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta charset="utf-8">
+        <title>Widget Proof Of Concept</title>
+        <link rel="stylesheet" href="/qunit.css">
+        <script src="/qunit.js"></script>
     </head>
     <body>
+        <div id="qunit"></div>
+        <div id="qunit-fixture"></div>
         <script type="text/javascript">//<![CDATA[
             (function(w) {
                 //------------------------------------
@@ -17,12 +21,16 @@
                 }
                 WidgetManager.prototype.loadConfig = function() {
                     console.log("load config based on " + this.placementId);
+                    return this;
                 }
                 WidgetManager.prototype.loadModules = function(modules) {
                     console.log("loading modules " + modules.join(", "));
+                    this.modules = modules;
+                    return this;
                 }
                 WidgetManager.prototype.loadVideo = function(id) {
                     this.playerManager.adapter.loadVideo(id);
+                    return this;
                 }
 
                 //------------------------------------
@@ -31,15 +39,16 @@
                 function PlayerManager(adapter) {
                     this.adapter = adapter;
                 }
-                
+
                 // Abstract adapter class
                 function PlayerAdapter(config) {
                     this.config = config;
                 }
                 PlayerAdapter.prototype.loadVideo = function(id) {
                     console.log("loading video " + id);
+                    return id;
                 }
-                
+
                 // HTML5 adapter
                 function HTML5Adapter(config) {
                     // call parent constructor
@@ -72,12 +81,32 @@
                 w.PlayerManager = PlayerManager;
                 w.AdapterFactory = AdapterFactory;
             })(window);
-
-            // Let's go!
-            var widgetManager = new WidgetManager("somePlacementId");
-            widgetManager.loadConfig();
-            widgetManager.loadModules(["module1", "module2", "module3"]);
-            widgetManager.loadVideo("someVideoId");
+            
+            runTests();
+            
+            // Functions
+            function runTests() {
+                test("Test WidgetManager constructor", function() {
+                    var widgetManager = new WidgetManager("somePlacementId");
+                    strictEqual(widgetManager.placementId, "somePlacementId");
+                });
+                test("Test WidgetManager::loadModules", function() {
+                    var widgetManager = new WidgetManager("somePlacementId");
+                    widgetManager.loadModules(["a", "b", "c"]);
+                    equal(widgetManager.modules.length, 3);
+                    deepEqual(widgetManager.modules, ["a", "b", "c"]);
+                });
+                test("Test WidgetManager method chaining", function() {
+                    var widgetManager = new WidgetManager("somePlacementId");
+                    ok(widgetManager.loadConfig().loadModules(["a", "b", "c"]).loadVideo("foo") instanceof WidgetManager);
+                });
+            }
+            function run() {
+                var widgetManager = new WidgetManager("somePlacementId");
+                widgetManager.loadConfig();
+                widgetManager.loadModules(["module1", "module2", "module3"]);
+                widgetManager.loadVideo("someVideoId");
+            }
             //]]></script>
     </body>
 </html>
