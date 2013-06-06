@@ -28,6 +28,12 @@
                     var widgetManager = new WidgetManager("somePlacementId");
                     ok(widgetManager.loadConfig().loadModules(["a", "b", "c"]).loadVideo("foo") instanceof WidgetManager);
                 });
+                test("Test WidgetManager:isReady", function() {
+                    var widgetManager = new WidgetManager("somePlacementId");
+                    strictEqual(widgetManager.isReady(), false);
+                    widgetManager.changeState(1);
+                    strictEqual(widgetManager.isReady(), true);
+                });
             }
             //]]></script>
     </body>

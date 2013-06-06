@@ -20,10 +20,13 @@
     };
     WidgetManager.prototype.changeState = function(state) {
         this.playerManager.state = state;
-        if (1 === this.playerManager.state) {
-            console.log("player is ready wohoo");
+        if (this.isReady()) {
+            console.log("player is ready yay");
         }
     };
+    WidgetManager.prototype.isReady = function() {
+        return 1 === this.playerManager.state;
+    }
 
     //------------------------------------
     // Player Manager
