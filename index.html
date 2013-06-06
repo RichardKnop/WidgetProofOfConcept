@@ -6,38 +6,79 @@
     </head>
     <body>
         <script type="text/javascript">//<![CDATA[
-            (function() {
+            (function(w) {
+                //------------------------------------
+                // Widget Manager
+                //------------------------------------
+                function WidgetManager(placementId) {
+                    this.placementId = placementId;
+                    var adapterFactory = new AdapterFactory();
+                    this.playerManager = new PlayerManager(adapterFactory.manufacture());
+                }
+                WidgetManager.prototype.loadConfig = function() {
+                    console.log("load config based on " + this.placementId);
+                }
+                WidgetManager.prototype.loadModules = function(modules) {
+                    console.log("loading modules " + modules.join(", "));
+                }
+                WidgetManager.prototype.loadVideo = function(id) {
+                    this.playerManager.adapter.loadVideo(id);
+                }
+
+                //------------------------------------
                 // Player Manager
                 //------------------------------------
                 function PlayerManager(adapter) {
                     this.adapter = adapter;
                 }
-                PlayerManager.prototype.getAdapter = function() {
-                    return this.adapter;
-                };
-                // Adapters
+                
+                // Abstract adapter class
                 function PlayerAdapter(config) {
                     this.config = config;
                 }
+                PlayerAdapter.prototype.loadVideo = function(id) {
+                    console.log("loading video " + id);
+                }
+                
+                // HTML5 adapter
                 function HTML5Adapter(config) {
+                    // call parent constructor
                     PlayerAdapter.call(this, config);
                 }
+                // inherit all parent methods
+                HTML5Adapter.prototype = new PlayerAdapter();
+
+                // Flash adapter
                 function FlashAdapter(config) {
+                    // call parent constructor
                     PlayerAdapter.call(this, config);
                 }
-                function AdapterFactory() {}
+                // inherit all parent methods
+                FlashAdapter.prototype = new PlayerAdapter();
+
+                // Adapter factory, will contain some logic to choose correct
+                // adapter based on device, browser etc
+                function AdapterFactory() {
+                }
                 AdapterFactory.prototype.manufacture = function() {
-                    // some logic to decide between HTML5Adapter or FlashAdapter
+                    // some logic here
                     return new FlashAdapter({"foo": "bar"});
                 }
+
                 //------------------------------------
-                
-                // Let's go!
-                var adapterFactory = new AdapterFactory();
-                var adapter = adapterFactory.manufacture();
-                var playerManager = new PlayerManager(adapter);
-                console.log(playerManager.getAdapter());
-            })();
+                // Assign objects we want visible outside current scope
+                //------------------------------------
+                w.WidgetManager = WidgetManager;
+                w.PlayerManager = PlayerManager;
+                w.AdapterFactory = AdapterFactory;
+            })(window);
+
+            // Let's go!
+            var placementId = "hello";
+            var widgetManager = new WidgetManager(placementId);
+            widgetManager.loadConfig();
+            widgetManager.loadModules(["module1", "module2", "module3"]);
+            widgetManager.loadVideo("foo");
             //]]></script>
     </body>
 </html>
