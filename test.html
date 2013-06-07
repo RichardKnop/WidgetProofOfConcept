@@ -9,6 +9,7 @@
     <body>
         <div id="qunit"></div>
         <div id="qunit-fixture"></div>
+        <script src="/qwery.js"></script>
         <script src="/widget.js"></script>
         <script type="text/javascript">//<![CDATA[
             // Functions
@@ -20,9 +21,9 @@
                 });
                 test("Test WidgetManager::loadModules", function() {
                     var widgetManager = new WidgetManager("somePlacementId");
-                    widgetManager.loadModules(["a", "b", "c"]);
-                    equal(widgetManager.modules.length, 3);
-                    deepEqual(widgetManager.modules, ["a", "b", "c"]);
+                    widgetManager.loadModules(["Banner", "Bogus", "Player"]);
+                    equal(widgetManager.modules.length, 2);
+                    deepEqual(widgetManager.modules, ["Banner", "Player"]);
                 });
                 test("Test WidgetManager method chaining", function() {
                     var widgetManager = new WidgetManager("somePlacementId");
