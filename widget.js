@@ -50,7 +50,7 @@
     };
     WidgetManager.prototype.isReady = function() {
         return 1 === this.playerManager.state;
-    }
+    };
     WidgetManager.prototype.loadVideo = function(id) {
         var player = q('#' + this.containerId + " .player .video-player")[0];
         this.playerManager.adapter.loadVideo(id, player);
@@ -59,7 +59,7 @@
 
     WidgetManager.prototype.getPlayer = function() {
         return this.playerManager.adapter.getPlayer();
-    }
+    };
     WidgetManager.prototype.render = function(containerId) {
         this.container = q('#' + containerId)[0];
 
@@ -94,7 +94,7 @@
         });
 
         return this;
-    }
+    };
 
     //------------------------------------
     // Player Manager
@@ -113,7 +113,7 @@
     }
     PlayerAdapter.prototype.loadVideo = function(videoId) {
         this.videoId = videoId;
-    }
+    };
 
     // HTML5 adapter
     function HTML5Adapter(config) {
@@ -125,10 +125,10 @@
     HTML5Adapter.prototype.loadVideo = function(videoId) {
         PlayerAdapter.prototype.loadVideo.call(this, videoId);
         //TODO
-    }
+    };
     HTML5Adapter.prototype.getPlayer = function() {
         return 'TODO';
-    }
+    };
 
     // Flash adapter
     function FlashAdapter(config) {
@@ -144,7 +144,7 @@
             video_id: this.videoId
         };
         this.player.loadVideoById(initObject);
-    }
+    };
     FlashAdapter.prototype.getPlayer = function() {
         return '<object class="video-player" id="video-player" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer" data="http://vds.rightster.com/v/01z0z6ghx2qwzu" width="100%" height="100%">\
                 <param name="movie" value="http://vds.rightster.com/v/' + this.videoId + '" />\
@@ -154,7 +154,7 @@
                 <param name="allowNetworkAccess" value="always" />\
                 <param name="FlashVars" value="jsApi=1" />\
                 </object>';
-    }
+    };
 
     // Adapter factory, will contain some logic to choose correct
     // adapter based on device, browser etc
