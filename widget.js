@@ -28,8 +28,10 @@
         var adapterFactory = new AdapterFactory();
         this.playerManager = new PlayerManager(adapterFactory.manufacture());
         this.modules = new Array();
+        this.moduleRenderer = new ModuleRenderer(this);
     }
     WidgetManager.prototype.loadConfig = function() {
+        //TODO call platform
         return this;
     };
     WidgetManager.prototype.loadModules = function(modules) {
@@ -62,20 +64,9 @@
     };
     WidgetManager.prototype.render = function(containerId) {
         this.container = q('#' + containerId)[0];
-
+        
         for (var i = 0; i < this.modules.length; i++) {
-            if ("Banner" === this.modules[i]) {
-                this.container.innerHTML += '<div class="banner">Banner</div>';
-            } else if ("Player" === this.modules[i]) {
-                this.container.innerHTML += '<div class="player">' + this.getPlayer() + '</div>';
-            } else if ("CollectionBrowser" === this.modules[i]) {
-                this.container.innerHTML += '<div class="collection-browser">\
-                                           <ul>\
-                                           <li><a href="#" rel="01z0z6ghx2qwzu" class="active">Video 1</a></li>\
-                                           <li><a href="#" rel="01z117ksx2qwzu">Video 2</a></li>\
-                                           </ul>\
-                                           </div>';
-            }
+            this.container.innerHTML += this.moduleRenderer.render(this.modules[i]);
         }
 
         var self = this;
@@ -164,6 +155,49 @@
         // some logic here
         return new FlashAdapter({"initialVideoId": "01z0z6ghx2qwzu"});
         //return new HTML5Adapter({"initialVideoId": "01z0z6ghx2qwzu"});
+    };
+
+    //------------------------------------
+    // Modules
+    //------------------------------------
+    function ModuleRenderer(widgetManager) {
+        this.widgetManager = widgetManager;
+    };
+    ModuleRenderer.prototype.render = function(moduleName) {
+        if ("Banner" === moduleName) {
+            var module = new BannerModule();
+            return module.render();
+        }
+        
+        if ("Player" === moduleName) {
+            var module = new PlayerModule();
+            return module.render(this.widgetManager);
+        }
+        
+        if ("CollectionBrowser" === moduleName) {
+            var module = new CollectionBrowserModule();
+            return module.render();
+        }
+    };
+    
+    function BannerModule() {}
+    BannerModule.prototype.render = function() {
+        return '<div class="banner">Banner</div>';
+    };
+    
+    function PlayerModule() {}
+    PlayerModule.prototype.render = function(widgetManager) {
+        return '<div class="player">' + widgetManager.getPlayer() + '</div>';
+    };
+    
+    function CollectionBrowserModule() {}
+    CollectionBrowserModule.prototype.render = function() {
+        return '<div class="collection-browser">\
+                <ul>\
+                <li><a href="#" rel="01z0z6ghx2qwzu" class="active">Video 1</a></li>\
+                <li><a href="#" rel="01z117ksx2qwzu">Video 2</a></li>\
+                </ul>\
+                </div>';
     };
 
     //------------------------------------
