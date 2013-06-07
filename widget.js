@@ -41,16 +41,35 @@
         this.modules = modules;
         return this;
     };
+    WidgetManager.prototype.changeState = function(state) {
+        this.playerManager.state = state;
+        if (this.isReady()) {
+            this.playerManager.adapter.player = q(" .player .video-player", this.container)[0];
+            console.log("player ready");
+        }
+    };
+    WidgetManager.prototype.isReady = function() {
+        return 1 === this.playerManager.state;
+    }
+    WidgetManager.prototype.loadVideo = function(id) {
+        var player = q('#' + this.containerId + " .player .video-player")[0];
+        this.playerManager.adapter.loadVideo(id, player);
+        return this;
+    };
+
+    WidgetManager.prototype.getPlayer = function() {
+        return this.playerManager.adapter.getPlayer();
+    }
     WidgetManager.prototype.render = function(containerId) {
-        var container = q('#' + containerId);
+        this.container = q('#' + containerId)[0];
 
         for (var i = 0; i < this.modules.length; i++) {
             if ("Banner" === this.modules[i]) {
-                container[0].innerHTML += '<div class="banner">Banner</div>';
+                this.container.innerHTML += '<div class="banner">Banner</div>';
             } else if ("Player" === this.modules[i]) {
-                container[0].innerHTML += '<div class="player">' + this.getPlayer() + '</div>';
+                this.container.innerHTML += '<div class="player">' + this.getPlayer() + '</div>';
             } else if ("CollectionBrowser" === this.modules[i]) {
-                container[0].innerHTML += '<div class="collection-browser">\
+                this.container.innerHTML += '<div class="collection-browser">\
                                            <ul>\
                                            <li><a href="#" rel="01z0z6ghx2qwzu" class="active">Video 1</a></li>\
                                            <li><a href="#" rel="01z117ksx2qwzu">Video 2</a></li>\
@@ -59,7 +78,8 @@
             }
         }
 
-        var videoLinks = q('.collection-browser a', container[0]);
+        var self = this;
+        var videoLinks = q('.collection-browser a', this.container);
         videoLinks.forEach(function(videoLink) {
             videoLink.onclick = function() {
                 videoLinks.forEach(function(videoLink) {
@@ -68,27 +88,12 @@
                     }
                 });
                 videoLink.className += " active";
+                self.loadVideo(videoLink.getAttribute("rel"));
                 return false;
             };
         });
 
         return this;
-    }
-    WidgetManager.prototype.loadVideo = function(id) {
-        this.playerManager.adapter.loadVideo(id);
-        return this;
-    };
-    WidgetManager.prototype.changeState = function(state) {
-        this.playerManager.state = state;
-        if (this.isReady()) {
-            console.log("player is ready yay");
-        }
-    };
-    WidgetManager.prototype.isReady = function() {
-        return 1 === this.playerManager.state;
-    }
-    WidgetManager.prototype.getPlayer = function() {
-        return this.playerManager.adapter.getPlayer();
     }
 
     //------------------------------------
@@ -135,7 +140,10 @@
     FlashAdapter.prototype.constructor = FlashAdapter;
     FlashAdapter.prototype.loadVideo = function(videoId) {
         PlayerAdapter.prototype.loadVideo.call(this, videoId);
-        //TODO
+        initObject = {
+            video_id: this.videoId
+        };
+        this.player.loadVideoById(initObject);
     }
     FlashAdapter.prototype.getPlayer = function() {
         return '<object class="video-player" id="video-player" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer" data="http://vds.rightster.com/v/01z0z6ghx2qwzu" width="100%" height="100%">\
