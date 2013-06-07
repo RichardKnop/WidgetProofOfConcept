@@ -43,7 +43,7 @@
     };
     WidgetManager.prototype.render = function(containerId) {
         var container = q('#' + containerId);
-        
+
         for (var i = 0; i < this.modules.length; i++) {
             if ("Banner" === this.modules[i]) {
                 container[0].innerHTML += '<div class="banner">Banner</div>';
@@ -52,14 +52,26 @@
             } else if ("CollectionBrowser" === this.modules[i]) {
                 container[0].innerHTML += '<div class="collection-browser">\
                                            <ul>\
-                                           <li>Video 1</li>\
-                                           <li>Video 2</li>\
-                                           <li>Video 3</li>\
+                                           <li><a href="#" rel="01z0z6ghx2qwzu" class="active">Video 1</a></li>\
+                                           <li><a href="#" rel="01z117ksx2qwzu">Video 2</a></li>\
                                            </ul>\
                                            </div>';
             }
         }
-        
+
+        var videoLinks = q('.collection-browser a', container[0]);
+        videoLinks.forEach(function(videoLink) {
+            videoLink.onclick = function() {
+                videoLinks.forEach(function(videoLink) {
+                    if (videoLink.className.match(/(?:^|\s)active(?!\S)/)) {
+                        videoLink.className = videoLink.className.replace(/(?:^|\s)active(?!\S)/g, '');
+                    }
+                });
+                videoLink.className += " active";
+                return false;
+            };
+        });
+
         return this;
     }
     WidgetManager.prototype.loadVideo = function(id) {
